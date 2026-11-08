@@ -122,7 +122,7 @@ public class MainActivity extends Activity {
         userPin = findViewById(R.id.userPin);
         userName.setText(prefs.getString("userName", ""));
 
-        serverBox.setText(prefs.getString("server", "http://192.168.2.36:8765"));
+        serverBox.setText(prefs.getString("server", ""));
         tokenBox.setText(prefs.getString("token", ""));
         setThinking(prefs.getBoolean("thinking", true), false);
         setWeb(prefs.getBoolean("web", true), false);

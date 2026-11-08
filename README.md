@@ -26,8 +26,7 @@ ollama stop home-qwen
 
 On this PC: http://127.0.0.1:8787
 
-On another device in the same Wi-Fi: `http://<this-pc>:8787`  
-Right now that address is http://192.168.2.36:8787
+On another device in the same Wi-Fi: `http://<this-pc>:8787`
 
 Each person has their own login and only their own chats. The login looks like an email (`anna@home.local`). No mail is sent. The first account, `admin@localhost`, is the administrator. New signups are normal users. Set `ENABLE_SIGNUP=false` in `.env` and run `docker compose up -d` when you want to close registration.
 
@@ -37,15 +36,15 @@ The site is Open WebUI in Docker. It reaches Ollama through a small local proxy 
 
 The app is not in a store. On a phone in the same Wi-Fi, open:
 
-http://192.168.2.36:8765/LocAI.apk
+`http://<this-pc>:8765/LocAI.apk`
 
 Install the downloaded `LocAI.apk`. Android will ask permission to install apps from the browser.
 
-The address `http://192.168.2.36:8765` by itself is not a page. It is the door the app uses. A browser that opens it without the key gets `Invalid key`. That is expected.
+The address `http://<this-pc>:8765` by itself is not a page. It is the door the app uses. A browser that opens it without the key gets `Invalid key`. That is expected.
 
 In the app, under the gear:
 
-- address: `http://192.168.2.36:8765`
+- address: `http://<this-pc>:8765`
 - key: the value of `PHONE_TOKEN` in `.env`
 
 One key works on every phone. Extra keys can be added as `PHONE_TOKEN_2`, `PHONE_TOKEN_3`, and so on.
