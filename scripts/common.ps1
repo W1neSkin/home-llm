@@ -154,6 +154,24 @@ function Invoke-ModelWarmup {
         -Body $payload -ContentType "application/json" -TimeoutSec 900 | Out-Null
 }
 
+function Start-TelegramBot {
+    # Бот сам ходит в Telegram, поэтому людям не нужен ваш Wi-Fi.
+    # Пустой токен или пустой список id — бот не запускается, чужие в него не попадут.
+    Import-ProjectEnv
+    $token = Get-ProjectValue "TELEGRAM_BOT_TOKEN"
+    $allowed = Get-ProjectValue "TELEGRAM_ALLOWED_IDS"
+    if (-not $token -or -not $allowed) { return $false }
+    $already = Get-CimInstance Win32_Process -Filter "Name = 'python.exe'" -ErrorAction SilentlyContinue |
+        Where-Object { $_.CommandLine -like "*telegram\bot.py*" }
+    if ($already) { return $true }
+    New-Item -ItemType Directory -Force -Path (Join-Path $Root "data") | Out-Null
+    $botLog = Join-Path $Root "data\telegram.log"
+    Start-Process -FilePath "py" -ArgumentList @("-3", "telegram\bot.py") `
+        -WorkingDirectory $Root -WindowStyle Hidden `
+        -RedirectStandardOutput $botLog -RedirectStandardError "$botLog.err"
+    return $true
+}
+
 function Get-LanAddress {
     # Нужен адрес домашней сети, не VPN и не виртуальные адаптеры.
     $nets = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |

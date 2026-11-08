@@ -1,4 +1,4 @@
-"""Телеграм-бот для домашней Qwen.
+"""Телеграм-бот для LocAI.
 
 Бот сам опрашивает Telegram, поэтому роутер пробрасывать не нужно.
 Телефон может быть где угодно. Нужен включенный этот компьютер и интернет.
@@ -111,7 +111,7 @@ def main():
                 continue
             if text in ("/start", "/reset"):
                 history[chat_id] = []
-                send_text(chat_id, f"Готов. Модель {MODEL}. Напишите сообщение. /reset очищает диалог.")
+                send_text(chat_id, "LocAI на связи. Напишите сообщение. /reset очищает диалог.")
                 continue
             try:
                 send_text(chat_id, answer(chat_id, text))

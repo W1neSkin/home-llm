@@ -16,6 +16,15 @@ function Write-Log {
 }
 
 Write-Log "старт"
+& "$PSScriptRoot\run-phone.ps1"
+
+# Файл data\paused создаёт значок в трее. Пока он есть, модель не поднимается.
+$pauseFlag = Join-Path $Root "data\paused"
+if (Test-Path $pauseFlag) {
+    Get-Process | Where-Object { $_.ProcessName -like "ollama*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+    Write-Log "на паузе, модель не запускаю"
+    exit 0
+}
 
 # Значок Ollama из автозагрузки обычно успевает подняться сам.
 if (-not (Wait-Ollama -Seconds 45)) {
@@ -28,51 +37,50 @@ if (-not (Wait-Ollama -Seconds 45)) {
 }
 Write-Log "Ollama отвечает"
 
-if (-not (Wait-Docker -Seconds 300)) {
-    Write-Log "Docker Desktop не готов"
-    exit 1
-}
-
-docker compose up -d
-if ($LASTEXITCODE -ne 0) {
-    Write-Log "docker compose up не удался"
-    exit 1
-}
-Write-Log "сайт запущен"
-
-# При входе в Windows веса уже на диске. Здесь только загрузка в видеокарту.
-# Скачивание новой версии делается отдельно скриптом update-model.ps1.
+# Сайт не обязателен для модели. Ошибка Docker не должна мешать запуску Qwen.
+# Образ скачивается только при HOME_LLM_PULL_WEB=1, иначе лишь запускаем уже скачанный.
 try {
-    Invoke-ModelWarmup -Model (Get-ProjectValue "MODEL" "home-qwen")
+    $webReady = $env:HOME_LLM_PULL_WEB -eq "1"
+    if (-not $webReady -and (Get-Command docker -ErrorAction SilentlyContinue)) {
+        docker image inspect ghcr.io/open-webui/open-webui:main 1>$null 2>$null
+        $webReady = ($LASTEXITCODE -eq 0)
+    }
+    if ($webReady -and (Wait-Docker -Seconds 60)) {
+        docker compose up -d
+        if ($LASTEXITCODE -eq 0) { Write-Log "сайт запущен" } else { Write-Log "сайт не запустился" }
+    } else {
+        Write-Log "сайт не трогаю: образ ещё не скачан"
+    }
+} catch {
+    Write-Log "сайт пропущен: $($_.Exception.Message)"
+}
+
+# Ярлык home-qwen собирается из локального файла. В интернет этот шаг не ходит.
+try {
+    $model = Get-ProjectValue "MODEL" "home-qwen"
+    # Сообщение ollama в stderr не должно обрывать скрипт: модели ещё может не быть.
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    & (Get-OllamaExe) show $model 1>$null 2>$null
+    $missing = $LASTEXITCODE -ne 0
+    $ErrorActionPreference = $prev
+    if ($missing) {
+        Write-Log "собираю модель из локального файла"
+        & "$PSScriptRoot\update-model.ps1"
+    }
+    Invoke-ModelWarmup -Model $model
     Write-Log "модель в памяти"
 } catch {
     Write-Log "прогрев модели не удался: $($_.Exception.Message)"
 }
 
-$token = Get-ProjectValue "TELEGRAM_BOT_TOKEN"
-$allowed = Get-ProjectValue "TELEGRAM_ALLOWED_IDS"
-if ($token -and $allowed) {
-    try {
-        $already = Get-CimInstance Win32_Process -Filter "Name = 'python.exe'" |
-            Where-Object { $_.CommandLine -like "*telegram\bot.py*" }
-        if (-not $already) {
-            # stdout и stderr нельзя писать в один файл: Windows не даёт открыть его дважды.
-            $botLog = Join-Path $Root "data\telegram.log"
-            Start-Process -FilePath "py" -ArgumentList @("-3", "telegram\bot.py") `
-                -WorkingDirectory $Root -WindowStyle Hidden `
-                -RedirectStandardOutput $botLog -RedirectStandardError "$botLog.err"
-            Write-Log "телеграм-бот запущен"
-        } else {
-            Write-Log "телеграм-бот уже работает"
-        }
-    } catch {
-        Write-Log "телеграм-бот не запустился: $($_.Exception.Message)"
-    }
+if (Start-TelegramBot) {
+    Write-Log "телеграм-бот запущен"
 } else {
     Write-Log "телеграм-бот выключен: нет токена или списка id"
 }
 
-$port = Get-ProjectValue "WEBUI_PORT" "8080"
+$port = Get-ProjectValue "WEBUI_PORT" "8787"
 $lan = Get-LanAddress
 Write-Log "этот компьютер: http://127.0.0.1:$port"
 Write-Log "домашняя сеть: http://${lan}:$port"

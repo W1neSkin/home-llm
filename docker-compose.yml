@@ -7,11 +7,16 @@ services:
     image: ghcr.io/open-webui/open-webui:main
     ports:
       # 8080 внутри контейнера. Снаружи порт берётся из .env.
-      - "${WEBUI_PORT:-8080}:8080"
+      - "${WEBUI_PORT:-8787}:8080"
     environment:
-      OLLAMA_BASE_URL: http://host.docker.internal:11434
-      WEBUI_NAME: "Домашняя Qwen"
+      # 11435 — локальный прокси: он выключает «размышление», иначе ответ часто пустой.
+      OLLAMA_BASE_URL: http://host.docker.internal:11435
+      WEBUI_NAME: "LocAI"
+      # true: чужие чаты не видны. Логин похож на почту, письма не отправляются.
+      WEBUI_AUTH: ${WEBUI_AUTH:-true}
       ENABLE_SIGNUP: ${ENABLE_SIGNUP:-true}
+      # Новые люди входят сразу, но не становятся администраторами.
+      DEFAULT_USER_ROLE: user
       DEFAULT_MODELS: ${MODEL:-home-qwen}
     extra_hosts:
       - "host.docker.internal:host-gateway"

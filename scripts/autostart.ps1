@@ -1,31 +1,38 @@
-﻿# Задача планировщика: через полминуты после входа в Windows запустить start.ps1.
-# Полминуты нужны, чтобы успели подняться Ollama и Docker Desktop.
-# Повторный запуск этого скрипта просто перезаписывает задачу.
+﻿# Ярлык на рабочем столе. В автозагрузку ничего не ставится:
+# модель стартует только когда ярлык открывают вручную.
+# Повторный запуск убирает старую задачу входа в Windows, если она осталась.
 
 . "$PSScriptRoot\common.ps1"
 
-$startScript = Join-Path $PSScriptRoot "start.ps1"
-$action = New-ScheduledTaskAction `
-    -Execute "powershell.exe" `
-    -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$startScript`"" `
-    -WorkingDirectory $Root
+$task = Get-ScheduledTask -TaskName "HomeLLM" -ErrorAction SilentlyContinue
+if ($task) {
+    Unregister-ScheduledTask -TaskName "HomeLLM" -Confirm:$false
+    Write-Host "Задача HomeLLM удалена"
+}
 
-$trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
-$trigger.Delay = "PT30S"
+# Установщик Ollama кладёт свой ярлык в автозагрузку. Убираем, чтобы
+# видеокарта не занималась сама при включении компьютера.
+$startup = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Startup\Ollama.lnk"
+if (Test-Path $startup) {
+    Remove-Item $startup -Force
+    Write-Host "Автозагрузка Ollama убрана"
+}
 
-$settings = New-ScheduledTaskSettingsSet `
-    -AllowStartIfOnBatteries `
-    -DontStopIfGoingOnBatteries `
-    -StartWhenAvailable `
-    -MultipleInstances IgnoreNew `
-    -ExecutionTimeLimit (New-TimeSpan -Minutes 20)
+$trayScript = Join-Path $PSScriptRoot "tray.ps1"
+$desktop = [Environment]::GetFolderPath("Desktop")
+foreach ($oldName in @("Домашняя Qwen.lnk", "Лампа.lnk", "Lamp.lnk")) {
+    $oldShortcut = Join-Path $desktop $oldName
+    if (Test-Path $oldShortcut) { Remove-Item $oldShortcut -Force }
+}
+$shortcutPath = Join-Path $desktop "LocAI.lnk"
+$shell = New-Object -ComObject WScript.Shell
+$shortcut = $shell.CreateShortcut($shortcutPath)
+$shortcut.TargetPath = "powershell.exe"
+$shortcut.Arguments = "-NoProfile -STA -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$trayScript`""
+$shortcut.WorkingDirectory = $Root
+$shortcut.WindowStyle = 7
+$shortcut.Description = "Start LocAI"
+$shortcut.IconLocation = "$(Join-Path $Root 'assets\locai.ico'),0"
+$shortcut.Save()
 
-Register-ScheduledTask `
-    -TaskName "HomeLLM" `
-    -Action $action `
-    -Trigger $trigger `
-    -Settings $settings `
-    -Description "Локальная Qwen и веб-чат в домашней сети" `
-    -Force | Out-Null
-
-Write-Host "Автозапуск записан: задача HomeLLM"
+Write-Host "Ярлык: $shortcutPath"

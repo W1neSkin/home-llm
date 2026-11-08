@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#171717"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/history"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_icon"
+            android:contentDescription="История"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_history" />
+
+        <ImageButton
+            android:id="@+id/newChat"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_icon"
+            android:contentDescription="Новый чат"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_new" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/user"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_icon"
+            android:contentDescription="Сменить человека"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_user" />
+
+        <ImageButton
+            android:id="@+id/settings"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_icon"
+            android:contentDescription="Настройки"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_gear" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/setup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/server"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_field"
+            android:hint="Адрес"
+            android:inputType="textUri"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:singleLine="true"
+            android:textColor="#F2F2F2"
+            android:textColorHint="#8A8A8A"
+            android:textCursorDrawable="@drawable/cursor" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <EditText
+                android:id="@+id/token"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_field"
+                android:hint="Ключ"
+                android:inputType="text"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:textColor="#F2F2F2"
+                android:textColorHint="#8A8A8A"
+                android:textCursorDrawable="@drawable/cursor" />
+
+            <ImageButton
+                android:id="@+id/paste"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_icon"
+                android:contentDescription="Вставить ключ"
+                android:padding="12dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_paste" />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/thinking"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Размышления"
+            android:textColor="#F2F2F2"
+            android:thumbTint="#F2F2F2"
+            android:trackTint="#6A6A6A" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Шрифт"
+                android:textColor="#F2F2F2"
+                android:textSize="16sp" />
+
+            <ImageButton
+                android:id="@+id/fontDown"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon"
+                android:contentDescription="Мельче"
+                android:padding="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_minus" />
+
+            <ImageButton
+                android:id="@+id/fontUp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon"
+                android:contentDescription="Крупнее"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_new" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/stage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/gate"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="20dp"
+                android:text="LocAI"
+                android:textColor="#F2F2F2"
+                android:textSize="20sp" />
+
+            <ImageButton
+                android:id="@+id/fingerprint"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_icon"
+                android:contentDescription="Отпечаток"
+                android:padding="16dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_finger"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/pinForm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/userName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_field"
+                android:hint="Имя"
+                android:inputType="textPersonName"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:textColor="#F2F2F2"
+                android:textColorHint="#8A8A8A"
+                android:textCursorDrawable="@drawable/cursor" />
+
+            <EditText
+                android:id="@+id/userPin"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_field"
+                android:hint="Код"
+                android:inputType="numberPassword"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:textColor="#F2F2F2"
+                android:textColorHint="#8A8A8A"
+                android:textCursorDrawable="@drawable/cursor" />
+
+            <ImageButton
+                android:id="@+id/enter"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_icon"
+                android:contentDescription="Войти"
+                android:padding="12dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_check" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/historyPanel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/historyList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="8dp" />
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/scroller"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/transcript"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="12dp" />
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/hero"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:text="LocAI"
+                android:textColor="#F2F2F2"
+                android:textSize="20sp" />
+
+            <FrameLayout
+                android:id="@+id/heroSlot"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/dock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="10dp"
+        android:visibility="gone" />
+
+    <!-- Поле на всю ширину. Значки мелкие и лежат внутри, а не рядом равной кнопкой. -->
+    <LinearLayout
+        android:id="@+id/composer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_composer"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="6dp">
+
+        <EditText
+            android:id="@+id/message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="top|start"
+            android:hint="Чем помочь?"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLines="8"
+            android:minHeight="84dp"
+            android:paddingStart="2dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="4dp"
+            android:textColor="#F2F2F2"
+            android:textColorHint="#8A8A8A"
+            android:textCursorDrawable="@drawable/cursor"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/pasteMessage"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon"
+                android:contentDescription="Вставить"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_paste" />
+
+            <ImageButton
+                android:id="@+id/voice"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon"
+                android:contentDescription="Голос"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_mic" />
+
+            <ImageButton
+                android:id="@+id/web"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon"
+                android:contentDescription="Интернет"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_web" />
+
+            <ImageButton
+                android:id="@+id/think"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon"
+                android:contentDescription="Размышления"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_think" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/send"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon"
+                android:contentDescription="Отправить"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_send" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
