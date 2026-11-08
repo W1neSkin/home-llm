@@ -1,0 +1,21 @@
+# Сайт чата для телефона и других компьютеров в домашней сети.
+# Модель здесь не запущена: Ollama стоит на Windows и напрямую видит RTX 5070 Ti.
+# Контейнер только показывает сайт и ходит в Ollama через host.docker.internal.
+
+services:
+  web:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      # 8080 внутри контейнера. Снаружи порт берётся из .env.
+      - "${WEBUI_PORT:-8080}:8080"
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      WEBUI_NAME: "Домашняя Qwen"
+      ENABLE_SIGNUP: ${ENABLE_SIGNUP:-true}
+      DEFAULT_MODELS: ${MODEL:-home-qwen}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      # Чаты и аккаунты живут на диске, не внутри контейнера.
+      - ./data/webui:/app/backend/data
+    restart: unless-stopped
